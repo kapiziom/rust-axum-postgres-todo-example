@@ -1,0 +1,6 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    date_created_utc TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
