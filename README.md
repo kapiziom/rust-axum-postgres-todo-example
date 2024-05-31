@@ -1,4 +1,4 @@
-# Rust WebAPI CRUD Example (Axum, PostgreSQL, JWT auth)
+## Rust WebAPI CRUD Example (Axum, PostgreSQL, JWT auth)
 
 ### Installation
 1. Clone repo.
