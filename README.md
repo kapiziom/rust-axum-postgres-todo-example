@@ -25,7 +25,7 @@
 - registration/authorization
 - todo CRUD
 
-### Technologies/liblaries
+### Technologies/libs
 - rust axum,
 - postgres
 - sqlx
