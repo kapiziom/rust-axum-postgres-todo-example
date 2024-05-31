@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use sqlx::{Pool, Postgres};
 
 #[derive(Clone)]

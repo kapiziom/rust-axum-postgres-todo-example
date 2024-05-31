@@ -1,6 +1,7 @@
 use axum::{Json, response::IntoResponse};
 use utoipa::{Modify, OpenApi, openapi};
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
+use crate::utils::pagination::Pager;
 
 pub mod router;
 pub mod auth_router;
@@ -20,11 +21,13 @@ pub async fn health_checker_handler() -> impl IntoResponse {
 
 #[derive(OpenApi)]
 #[openapi(
+    modifiers(&SecurityAddon),
     nest(
         (path = "/api/todos", api = todos_router::TodoApi),
         (path = "/api/users", api = users_router::UserApi),
         (path = "/api/auth", api = auth_router::AuthApi)
-    )
+    ),
+    components(schemas(Pager))
 )]
 struct ApiDoc;
 
@@ -46,16 +49,4 @@ impl Modify for SecurityAddon {
             );
         }
     }
-}
-
-/// Return JSON version of an OpenAPI schema
-#[utoipa::path(
-    get,
-    path = "/api-docs/openapi.json",
-    responses(
-        (status = 200, description = "JSON file", body = ())
-    )
-)]
-async fn openapi() -> Json<utoipa::openapi::OpenApi> {
-    Json(ApiDoc::openapi())
 }

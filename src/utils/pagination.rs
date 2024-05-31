@@ -1,6 +1,7 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize};
+use utoipa::ToSchema;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, ToSchema)]
 pub struct Pager {
     pub offset: i32,
     pub page_size: i32,

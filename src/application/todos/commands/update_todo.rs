@@ -4,10 +4,10 @@ use axum::http::{StatusCode, request::Parts};
 use axum::Json;
 use axum::response::IntoResponse;
 use serde_json::json;
-use validator::Validate;
 use crate::application::todos::models::update_todo_model::UpdateTodoModel;
 use crate::auth::AuthenticatedUser;
 use crate::server::state::AppState;
+use crate::utils::validation::validate_body;
 
 
 #[utoipa::path(
@@ -30,24 +30,19 @@ pub async fn update_todo(
     Json(body): Json<UpdateTodoModel>)
     -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)>
 {
-    if let Err(validation_errors) = body.validate() {
-        let json_response = json!({
-            "status": "error",
-            "message": "Validation error",
-            "errors": validation_errors
-        });
-        return Err((StatusCode::BAD_REQUEST, Json(json_response)));
-    }
+    validate_body(&body).await?;
 
     let result = sqlx::query!(
         "UPDATE todos \
         SET title = COALESCE($1, title), \
             description = COALESCE($2, description), \
-            is_completed = COALESCE($3, is_completed) \
-        WHERE id = $4 AND user_id = $5",
+            is_completed = COALESCE($3, is_completed), \
+            date_modified_utc = COALESCE($4, date_modified_utc) \
+        WHERE id = $5 AND user_id = $6",
         body.title,
         body.description,
         body.is_completed,
+        chrono::Utc::now(),
         id,
         user_id
     )

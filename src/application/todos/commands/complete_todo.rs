@@ -28,9 +28,11 @@ pub async fn complete_todo(
 {
     let result = sqlx::query!(
         "UPDATE todos \
-        SET is_completed = COALESCE($1, is_completed) \
-        WHERE id = $2 AND user_id = $3",
+        SET is_completed = COALESCE($1, is_completed), \
+            date_modified_utc = COALESCE($2, date_modified_utc) \
+        WHERE id = $3 AND user_id = $4",
         true,
+        chrono::Utc::now(),
         id,
         user_id
     )
@@ -54,7 +56,7 @@ pub async fn complete_todo(
 
     let json_response = json!({
         "status": "success",
-        "message": "Todo updated"
+        "message": "Todo completed"
     });
 
     Ok((StatusCode::OK, Json(json_response)))

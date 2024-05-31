@@ -1,12 +1,10 @@
 pub mod jwt;
 
 use axum::async_trait;
-use axum::extract::{FromRequestParts, State};
+use axum::extract::{FromRequestParts};
 use axum::http::{request::Parts, StatusCode};
-use jsonwebtoken::{decode, DecodingKey, Validation};
-use std::sync::Arc;
 
-use crate::auth::jwt::{Claims, validate_token};
+use crate::auth::jwt::{validate_token};
 
 pub struct AuthenticatedUser {
     pub user_id: i32,
@@ -21,7 +19,13 @@ impl<S> FromRequestParts<S> for AuthenticatedUser
 
     async fn from_request_parts(parts: &mut Parts, state: &S) -> Result<Self, Self::Rejection> {
         let headers = parts.headers.get("Authorization").ok_or(StatusCode::UNAUTHORIZED)?;
-        let token = headers.to_str().map_err(|_| StatusCode::UNAUTHORIZED)?;
+        let auth_header = headers.to_str().map_err(|_| StatusCode::UNAUTHORIZED)?;
+
+        if !auth_header.starts_with("Bearer ") {
+            return Err(StatusCode::UNAUTHORIZED);
+        }
+
+        let token = auth_header.trim_start_matches("Bearer ").trim();
 
         let token_data = validate_token(token)
             .map_err(|_| StatusCode::UNAUTHORIZED)?;

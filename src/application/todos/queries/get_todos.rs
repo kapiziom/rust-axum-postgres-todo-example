@@ -11,6 +11,9 @@ use crate::utils::pagination::Pager;
 #[utoipa::path(
     get,
     path = "",
+    params(
+        ("pager" = Pager, Query, description = "Pager model")
+    ),
     responses(
         (status = 200, description = "List all todos", body = [TodoListModel])
     ),
@@ -25,7 +28,7 @@ pub async fn get_todos(
     -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)>
 {
     let valid_sort_by = match pager.sort_by.as_str() {
-        "title" | "date_created_utc" => pager.sort_by.to_string(),
+        "id" | "title" | "date_created_utc" => pager.sort_by.to_string(),
         _ => "date_created_utc".to_string(),
     };
 

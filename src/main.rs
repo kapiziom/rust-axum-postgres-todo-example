@@ -3,12 +3,12 @@ use std::sync::Arc;
 use axum::http::{HeaderValue, Method};
 use axum::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE};
 use dotenvy::dotenv;
-use sqlx::postgres::PgPoolOptions;
 use tower_http::cors::CorsLayer;
 
 use tower_http::trace::TraceLayer;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+//use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
+use rust_axum_example::infrastructure::database::postgres;
 use rust_axum_example::api::router::create_router;
 use rust_axum_example::server::state::AppState;
 
@@ -22,12 +22,8 @@ async fn main() {
     Arc::new(env::var("JWT_SECRET").expect("JWT_SECRET must be set"));
     let environment = env::var("ENVIRONMENT").expect("ENVIRONMENT must be set");
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let pool = PgPoolOptions::new()
-        .max_connections(10)
-        .connect(&database_url)
-        .await
-        .expect("Failed to create pool");
+    let connection_string = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let pool = postgres::init_postgres(&connection_string).await;
 
     let cors = CorsLayer::new()
         .allow_origin("http://localhost:3000".parse::<HeaderValue>().unwrap())

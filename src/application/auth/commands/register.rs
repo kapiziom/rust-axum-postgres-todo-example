@@ -70,8 +70,7 @@ pub async fn register(
 
     let json_response = json!({
         "status": "success",
-        "message": "User created successfully",
-        "user_id": new_user.id
+        "message": "User created successfully"
     });
 
     Ok((StatusCode::CREATED, Json(json_response)))

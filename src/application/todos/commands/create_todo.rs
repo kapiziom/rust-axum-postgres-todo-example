@@ -5,11 +5,10 @@ use axum::Json;
 use axum::response::IntoResponse;
 use chrono::Utc;
 use serde_json::json;
-use validator::Validate;
 use crate::application::todos::models::create_todo_model::CreateTodoModel;
 use crate::auth::AuthenticatedUser;
 use crate::server::state::AppState;
-use crate::utils::errors::errors_to_json;
+use crate::utils::validation::validate_body;
 
 
 #[utoipa::path(
@@ -28,14 +27,7 @@ pub async fn create_todo(
     Json(body): Json<CreateTodoModel>)
     -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)>
 {
-    if let Err(errors) = body.validate() {
-        let json_response = json!({
-            "status": "error",
-            "message": "Validation error",
-            "errors": errors_to_json(errors)
-        });
-        return Ok((StatusCode::BAD_REQUEST, Json(json_response)));
-    }
+    validate_body(&body).await?;
 
     let result = sqlx::query!(
         "INSERT INTO todos (user_id, title, description) VALUES ($1, $2, $3) RETURNING id",
