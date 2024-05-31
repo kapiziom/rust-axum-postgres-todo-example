@@ -12,7 +12,7 @@ use crate::server::state::AppState;
 
 #[utoipa::path(
     put,
-    path = "/api/todos/{id}",
+    path = "/{id}",
     params(
         ("id" = u32, Path, description = "Todo ID")
     ),

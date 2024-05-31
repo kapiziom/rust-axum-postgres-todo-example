@@ -3,7 +3,7 @@ use axum::extract::{Request, State};
 use axum::http::StatusCode;
 use axum::Json;
 use axum::response::IntoResponse;
-use crate::application::users::models::login_model::LoginModel;
+use crate::application::auth::models::login_model::LoginModel;
 use crate::server::state::AppState;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use bcrypt::{verify};
@@ -15,7 +15,7 @@ use crate::auth::jwt::generate_token;
 
 #[utoipa::path(
     post,
-    path = "/api/users/authorize",
+    path = "/authorize",
     responses(
         (status = 200, description = "Login/authorization", body = LoginModel)
     )

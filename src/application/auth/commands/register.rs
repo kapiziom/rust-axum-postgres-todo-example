@@ -6,13 +6,13 @@ use axum::response::IntoResponse;
 use chrono::{Utc};
 use serde_json::json;
 use bcrypt::{hash_with_result, DEFAULT_COST};
-use crate::application::users::models::register_model::RegisterModel;
+use crate::application::auth::models::register_model::RegisterModel;
 use crate::server::state::AppState;
 
 
 #[utoipa::path(
     post,
-    path = "/api/users/register",
+    path = "/register",
     responses(
         (status = 200, description = "Register new account", body = RegisterModel)
     )
@@ -38,8 +38,8 @@ pub async fn register(
                 "status": "error",
                 "message": err.to_string()
             });
-                (StatusCode::INTERNAL_SERVER_ERROR, Json(json_response))
-            })?;
+            (StatusCode::INTERNAL_SERVER_ERROR, Json(json_response))
+        })?;
 
     if user_exists.is_some() {
         let json_response = json!({
@@ -58,15 +58,15 @@ pub async fn register(
             body.login,
             hash,
             Utc::now())
-        .fetch_one(&state.db)
-        .await
-        .map_err(|err| {
-            let json_response = json!({
+            .fetch_one(&state.db)
+            .await
+            .map_err(|err| {
+                let json_response = json!({
             "status": "error",
             "message": err.to_string()
         });
-            (StatusCode::INTERNAL_SERVER_ERROR, Json(json_response))
-        })?;
+                (StatusCode::INTERNAL_SERVER_ERROR, Json(json_response))
+            })?;
 
     let json_response = json!({
         "status": "success",

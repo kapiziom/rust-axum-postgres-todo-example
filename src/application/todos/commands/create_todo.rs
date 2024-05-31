@@ -14,7 +14,7 @@ use crate::utils::errors::errors_to_json;
 
 #[utoipa::path(
     post,
-    path = "/api/todos",
+    path = "",
     responses(
         (status = 200, description = "Create new Todo", body = CreateTodoModel)
     ),

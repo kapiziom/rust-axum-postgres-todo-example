@@ -10,7 +10,7 @@ use crate::utils::pagination::Pager;
 
 #[utoipa::path(
     get,
-    path = "/api/todos",
+    path = "",
     responses(
         (status = 200, description = "List all todos", body = [TodoListModel])
     ),

@@ -12,7 +12,7 @@ use anyhow::Error;
 
 #[utoipa::path(
     get,
-    path = "/api/users/me",
+    path = "/me",
     responses(
         (status = 200, description = "Get current authorized user", body = UserModel)
     ),

@@ -3,6 +3,7 @@ use utoipa::{Modify, OpenApi, openapi};
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 
 pub mod router;
+pub mod auth_router;
 pub mod users_router;
 pub mod todos_router;
 
@@ -22,7 +23,7 @@ pub async fn health_checker_handler() -> impl IntoResponse {
     nest(
         (path = "/api/todos", api = todos_router::TodoApi),
         (path = "/api/users", api = users_router::UserApi),
-        (path = "/api/auth", api = users_router::UserApi)
+        (path = "/api/auth", api = auth_router::AuthApi)
     )
 )]
 struct ApiDoc;
